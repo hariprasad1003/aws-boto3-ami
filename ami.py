@@ -7,6 +7,8 @@ REGION_NAME           = config("REGION_NAME")
 INSTANCE_ID           = config("INSTANCE_ID")
 INSTANCE_NAME         = config("INSTANCE_NAME")
 
+IMAGE_ID              = config("IMAGE_ID")
+
 ec2_client = boto3.client(
     'ec2',
     aws_access_key_id     = AWS_ACCESS_KEY_ID,
@@ -18,7 +20,22 @@ ec2_client = boto3.client(
 # for instances in response['Reservations']:
 #     print(instances)
 
-ec2_client.create_image( 
-    InstanceId=INSTANCE_ID, 
-    Name=INSTANCE_NAME, 
+def create_image():
+    ec2_client.create_image( 
+        InstanceId=INSTANCE_ID, 
+        Name=INSTANCE_NAME, 
     )
+
+def create_instance():
+    instances = ec2_client.run_instances(
+        ImageId=IMAGE_ID,
+        MinCount=1,
+        MaxCount=1,
+        InstanceType="t2.micro",
+        KeyName="ec2-key-pair"
+    )
+
+    print(instances["Instances"][0]["InstanceId"])
+    
+# create_image()
+# create_instance()
